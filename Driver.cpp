@@ -98,22 +98,24 @@ void DCMotorDriver::syncPWMsSlices() {
 	pwm_set_mask_enabled(driver_gpio_slices_mask | (pwm_hw->en));
 }
 
-void DCMotorDriver::setPWMsDC(PWMDir dir, float dc) {
+void DCMotorDriver::setPWMsDC(MotorDir dir, float dc) {
     // Saves the values to the object's attributes just in case they are needed
     pwm_dc = dc;
     pwm_dir = dir;
 
-    /// \todo Create a variable that allows to set min and max value for each channel
-    uint16_t pwm_level_sp = static_cast<uint16_t>(dc * pwm_top / 100 + 0.5); // Rounds the scaled dc float to int, casting the value will truncate. Also, dc is always positive
+    uint16_t pwm_level_sp = static_cast<uint16_t>(dc * pwm_top / 100.0 + 0.5); // Rounds the scaled dc float to int, casting the value will truncate. Also, dc is always positive.
+
     switch (dir) {
-        case PWMDir::cw:
+        case MotorDir::cw:
             pwm_set_chan_level(PWMGPIOs[0].slice, PWMGPIOs[0].channel, pwm_level_sp);
             pwm_set_chan_level(PWMGPIOs[1].slice, PWMGPIOs[1].channel, 0);
             break;
-        case PWMDir::ccw:
+        case MotorDir::ccw:
             pwm_set_chan_level(PWMGPIOs[0].slice, PWMGPIOs[0].channel, 0);
             pwm_set_chan_level(PWMGPIOs[1].slice, PWMGPIOs[1].channel, pwm_level_sp);
             break;
     }
 }
 
+float DCMotorDriver::getPWMDC() { return pwm_dc; }
+MotorDir DCMotorDriver::getMotorDir() { return pwm_dir; }

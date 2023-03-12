@@ -23,7 +23,7 @@ typedef struct PWMClockDivider {
     uint8_t int_only; // Use this just in case the frac part of the divider is not going to be used (less PWM frequency precision)
 } PWMClockDivider;
 
-enum class PWMDir {
+enum class MotorDir {
     cw,
     ccw
 };
@@ -51,11 +51,14 @@ public: // Public methods
      * @param dir Direction of Motor. cw: PWMGPIOs[1] at zero% dc, ccw: PWMGPIOs[0] at zero% dc 
      * @param dc Duty cycle of the GPIO that isn't at zero% dc. Only positive values
      */
-    void setPWMsDC(PWMDir dir, float dc);
+    void setPWMsDC(MotorDir dir, float dc);
+
+    float getPWMDC();
+    MotorDir getMotorDir();
 
 private: // Private attributes
     float pwm_dc;
-    PWMDir pwm_dir; // Since only one GPIO is outputting pwm at one time, we have pwm_dir and pwm_dc instead of a dc value for each GPIO
+    MotorDir pwm_dir; // Since only one GPIO is outputting pwm at one time, we have pwm_dir and pwm_dc instead of a dc value for each GPIO
 
 private: // Private methods
     void syncPWMsSlices();
